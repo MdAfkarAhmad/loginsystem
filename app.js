@@ -3,11 +3,9 @@ const cors = require("cors");
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Temporary users
 const users = [
     {
         username: "afkar",
@@ -15,14 +13,11 @@ const users = [
     }
 ];
 
-// Home route - useful for testing
 app.get("/", (req, res) => {
     res.send("API is running!");
 });
 
-// Login API
 app.post("/login", (req, res) => {
-
     const { username, password } = req.body;
 
     const user = users.find(
@@ -43,7 +38,6 @@ app.post("/login", (req, res) => {
     });
 });
 
-// Render gives us the PORT
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
