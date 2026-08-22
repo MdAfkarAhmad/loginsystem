@@ -1,45 +1,39 @@
-const express = require("express");
-const cors = require("cors");
+const TelegramBot = require("node-telegram-bot-api");
 
-const app = express();
+const TOKEN = "YOUR_BOT_TOKEN";
 
-app.use(cors());
-app.use(express.json());
-
-const users = [
-    {
-        username: "afkar",
-        password: "1234"
-    }
-];
-
-app.get("/", (req, res) => {
-    res.send("API is running!");
+const bot = new TelegramBot(TOKEN, {
+    polling: true
 });
 
-app.post("/login", (req, res) => {
-    const { username, password } = req.body;
-
-    const user = users.find(
-        u => u.username === username &&
-             u.password === password
+bot.onText(/\/start/, (msg) => {
+    bot.sendMessage(
+        msg.chat.id,
+        "🏆 Welcome to Study Battle!\n\nPress the button below to start.",
+        {
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        {
+                            text: "🏆 Join Competition",
+                            callback_data: "join"
+                        }
+                    ]
+                ]
+            }
+        }
     );
+});
 
-    if (!user) {
-        return res.status(401).json({
-            success: false,
-            message: "Invalid username or password"
-        });
+bot.on("callback_query", (query) => {
+    if (query.data === "join") {
+        bot.answerCallbackQuery(query.id);
+
+        bot.sendMessage(
+            query.message.chat.id,
+            "✅ You joined the competition!\n\nThe competition will start soon."
+        );
     }
-
-    res.json({
-        success: true,
-        message: "Login successful"
-    });
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+console.log("Bot is running...");
