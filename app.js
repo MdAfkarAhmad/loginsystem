@@ -1,14 +1,13 @@
-const TelegramBot = require("node-telegram-bot-api");
+const { Bot } = require("node-telegram-bot-api");
 
 const TOKEN = "8278558775:AAGCNxUMf_QG6CzI6Jd_uhwkeNu5bKR2Bps";
 
-const bot = new TelegramBot(TOKEN, {
-    polling: true
-});
+const bot = new Bot(TOKEN);
 
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(
-        msg.chat.id,
+bot.start();
+
+bot.command("start", async (ctx) => {
+    await ctx.reply(
         "🏆 Welcome to Study Battle!\n\nPress the button below to start.",
         {
             reply_markup: {
@@ -25,12 +24,11 @@ bot.onText(/\/start/, (msg) => {
     );
 });
 
-bot.on("callback_query", (query) => {
-    if (query.data === "join") {
-        bot.answerCallbackQuery(query.id);
+bot.on("callback_query", async (ctx) => {
+    if (ctx.callbackQuery.data === "join") {
+        await ctx.answerCallbackQuery();
 
-        bot.sendMessage(
-            query.message.chat.id,
+        await ctx.reply(
             "✅ You joined the competition!\n\nThe competition will start soon."
         );
     }
