@@ -1,37 +1,98 @@
-const { Bot } = require("node-telegram-bot-api");
+const express = require("express");
+const fs = require("fs");
+const crypto = require("crypto");
 
-const TOKEN = "8278558775:AAGCNxUMf_QG6CzI6Jd_uhwkeNu5bKR2Bps";
+const app = express();
+const PORT = 3000;
 
-const bot = new Bot(TOKEN);
+app.use(express.json());
 
-bot.command("start", async (ctx) => {
-    await ctx.reply(
-        "🏆 Welcome to Study Battle!\n\nPress the button below to start.",
-        {
-            reply_markup: {
-                inline_keyboard: [
-                    [
-                        {
-                            text: "🏆 Join Competition",
-                            callback_data: "join"
-                        }
-                    ]
-                ]
-            }
-        }
+const USERS_FILE = "users.json";
+
+// Create users.json if it doesn't exist
+if (!fs.existsSync(USERS_FILE)) {
+    fs.writeFileSync(USERS_FILE, "[]");
+}
+
+function getUsers() {
+    return JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
+}
+
+function saveUsers(users) {
+    fs.writeFileSync(
+        USERS_FILE,
+        JSON.stringify(users, null, 2)
     );
-});
+}
 
-bot.on("callback_query", async (ctx) => {
-    if (ctx.callbackQuery.data === "join") {
-        await ctx.answerCallbackQuery();
+function hashPassword(password) {
+    return crypto
+        .createHash("sha256")
+        .update(password)
+        .digest("hex");
+}
 
-        await ctx.reply(
-            "✅ You joined the competition!"
-        );
+
+// SIGN UP
+app.post("/signup", (req, res) => {
+
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({
+            message: "Username and password are required"
+        });
     }
+
+    const users = getUsers();
+
+    const existingUser = users.find(
+        user => user.username === username
+    );
+
+    if (existingUser) {
+        return res.status(409).json({
+            message: "Username already exists"
+        });
+    }
+
+    users.push({
+        username,
+        password: hashPassword(password)
+    });
+
+    saveUsers(users);
+
+    res.status(201).json({
+        message: "Account created successfully"
+    });
 });
 
-bot.startPolling();
 
-console.log("Bot is running...");
+// LOGIN
+app.post("/login", (req, res) => {
+
+    const { username, password } = req.body;
+
+    const users = getUsers();
+
+    const user = users.find(
+        user => user.username === username
+    );
+
+    if (!user || user.password !== hashPassword(password)) {
+        return res.status(401).json({
+            message: "Invalid username or password"
+        });
+    }
+
+    res.json({
+        message: "Login successful",
+        username: user.username
+    });
+});
+
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
