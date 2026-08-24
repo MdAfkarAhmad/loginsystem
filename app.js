@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const crypto = require("crypto");
-
+app.use(express.static("."));
 const app = express();
 const PORT = 3000;
 
