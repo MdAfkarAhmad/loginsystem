@@ -1,12 +1,12 @@
 const express = require("express");
 const fs = require("fs");
 const crypto = require("crypto");
-app.use(express.static("."));
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 
+app.use(express.static("."));
 const USERS_FILE = "users.json";
 
 // Create users.json if it doesn't exist
