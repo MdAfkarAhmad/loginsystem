@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login & Signup</title>
+</head>
+
+<body>
+
+    <h2>Sign Up</h2>
+
+    <form id="signupForm">
+        <input
+            type="text"
+            id="signupUsername"
+            placeholder="Username"
+            required
+        >
+
+        <input
+            type="password"
+            id="signupPassword"
+            placeholder="Password"
+            required
+        >
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p id="signupMessage"></p>
+
+
+    <hr>
+
+
+    <h2>Login</h2>
+
+    <form id="loginForm">
+        <input
+            type="text"
+            id="loginUsername"
+            placeholder="Username"
+            required
+        >
+
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="Password"
+            required
+        >
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p id="loginMessage"></p>
+
+
+    <script>
+
+        // SIGN UP
+        document
+            .getElementById("signupForm")
+            .addEventListener("submit", async (e) => {
+
+                e.preventDefault();
+
+                const username =
+                    document.getElementById("signupUsername").value;
+
+                const password =
+                    document.getElementById("signupPassword").value;
+
+
+                const response = await fetch(
+                    "https://loginsystem-ferj.onrender.com/signup",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    }
+                );
+
+
+                const data = await response.json();
+
+                document.getElementById("signupMessage")
+                    .textContent = data.message;
+            });
+
+
+
+        // LOGIN
+        document
+            .getElementById("loginForm")
+            .addEventListener("submit", async (e) => {
+
+                e.preventDefault();
+
+                const username =
+                    document.getElementById("loginUsername").value;
+
+                const password =
+                    document.getElementById("loginPassword").value;
+
+
+                const response = await fetch(
+                    "https://loginsystem-ferj.onrender.com/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    }
+                );
+
+
+                const data = await response.json();
+
+                document.getElementById("loginMessage")
+                    .textContent = data.message;
+
+
+                if (response.ok) {
+                    console.log("Logged in user:", data.username);
+                }
+
+            });
+
+    </script>
+
+</body>
+</html>
