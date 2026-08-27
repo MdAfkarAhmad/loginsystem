@@ -420,7 +420,8 @@
 
             const data = await response.json();
 
-            message.textContent = data.message;
+
+            message.innerHTML = data.message;
             message.classList.add(response.ok ? "success" : "error");
 
             if (response.ok) {
@@ -462,7 +463,14 @@
 
             const data = await response.json();
 
-            message.textContent = data.message;
+const publicData = data.publicData;
+
+function showUsers(){
+alert(publicData);
+}
+
+
+            message.innerHTML = data.message + " <span onclick = 'showUsers()'> See users</span>";
             message.classList.add(response.ok ? "success" : "error");
 
             if (response.ok) {
