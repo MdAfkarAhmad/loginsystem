@@ -449,6 +449,9 @@
         message.textContent = "";
         message.className = "message";
 
+
+const loginData;
+
         try {
             const response = await fetch(
                 "https://loginsystem-ferj.onrender.com/login",
@@ -461,20 +464,20 @@
                 }
             );
 
-            const data = await response.json();
+            loginData = await response.json();
 
-const publicData = data.publicData;
+const publicData =loginData.publicData;
 
 function showUsers(){
 alert(publicData);
 }
 
 
-            message.innerHTML = data.message + " <span onclick = 'showUsers()'> See users</span>";
+            message.innerHTML = loginData.message + " <span onclick = 'showUsers()'> See users</span>";
             message.classList.add(response.ok ? "success" : "error");
 
             if (response.ok) {
-                console.log("Logged in user:", data.username);
+                console.log("Logged in user:", loginData.username);
             }
         } catch {
             message.textContent = "Unable to connect to server.";
