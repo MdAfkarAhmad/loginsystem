@@ -86,9 +86,13 @@ app.post("/login", (req, res) => {
         });
     }
 
+
+const publicData = users.map(user => user.username);
+
     res.json({
         message: "Login successful",
-        username: user.username
+        username: user.username,
+        data : publicData
     });
 });
 
